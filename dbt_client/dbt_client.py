@@ -137,7 +137,7 @@ class DbtClient:
 
         if (
             (timeout_action not in ["raise", "return"])
-            or
+            and
             (not callable(timeout_action))
         ):
             raise ValueError(

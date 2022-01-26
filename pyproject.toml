@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dbt-client"
-version = "0.1.0"
+version = "0.1.1"
 description = "A simple client for DBT RPC instances"
 authors = ["Gabriel Gazola Milan <gabriel.gazola@poli.ufrj.br>"]
 license = "GPL-3.0-only"
