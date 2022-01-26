@@ -3,11 +3,13 @@ Provides the main class for the dbt client.
 """
 
 import base64
-from time import time
+from time import time, sleep
 from typing import Callable, List, Union
 from uuid import uuid1
 
 import requests
+
+DEFAULT_SYNC_SLEEP = 1
 
 
 class DbtClient:
@@ -183,6 +185,7 @@ class DbtClient:
                 )
             if state == "success":
                 return response_data
+            sleep(DEFAULT_SYNC_SLEEP)
 
     def cli(
         self,
