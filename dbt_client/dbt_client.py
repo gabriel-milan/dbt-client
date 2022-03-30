@@ -153,6 +153,19 @@ class DbtClient:
                 raise Exception(
                     f"Unknown response format for sync execution: {response_data}"
                 )
+        elif "error" in response_data:
+            if "data" in response_data["error"]:
+                if "message" not in response_data["error"]["data"]:
+                    raise Exception(
+                        f"Unknown response format for sync execution: {response_data}"
+                    )
+                raise Exception(
+                    f"Error running sync command: {response_data['error']['data']['message']}"
+                )
+            else:
+                raise Exception(
+                    f"Unknown response format for sync execution: {response_data}"
+                )
         else:
             raise Exception(
                 f"Unknown response format for sync execution: {response_data}"
@@ -179,12 +192,41 @@ class DbtClient:
                     raise Exception(
                         f"Unknown response format for sync execution: {response_data}"
                     )
+            elif "error" in response_data:
+                if "data" in response_data["error"]:
+                    if "message" not in response_data["error"]["data"]:
+                        raise Exception(
+                            f"Unknown response format for sync execution: {response_data}"
+                        )
+                    raise Exception(
+                        f"Error running sync command: {response_data['error']['data']['message']}"
+                    )
+                else:
+                    raise Exception(
+                        f"Unknown response format for sync execution: {response_data}"
+                    )
             else:
                 raise Exception(
                     f"Unknown response format for sync execution: {response_data}"
                 )
             if state == "success":
+                if len(response_data["result"]["results"]) == 0:
+                    raise Exception(
+                        "There are no results here. This probably indicates that the task failed."
+                    )
                 return response_data
+            elif state == "failed":
+                try:
+                    error_message = response_data["result"]["results"][-1]["message"]
+                except KeyError:
+                    error_message = response_data
+                raise Exception(
+                    f"Error running sync command: {error_message}"
+                )
+            elif state and state != "running":
+                raise NotImplementedError(
+                    f"Unknown state: {state}"
+                )
             sleep(DEFAULT_SYNC_SLEEP)
 
     def cli(
